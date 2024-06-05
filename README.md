@@ -1,1 +1,0 @@
-[ERD-UIP.pdf](https://github.com/user-attachments/files/15571828/ERD-UIP.pdf)
