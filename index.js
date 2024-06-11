@@ -1,6 +1,16 @@
+require("dotenv").config();
+const { error } = require("console");
 const express = require('express')
 const app = express()
+const mongoose = require("mongoose");
 const path = require('path')
+
+const userRoutes = require('./server/routes/user');
+const postRoutes = require('./server/routes/post');
+
+mongoose.connect(process.env.dbURL)
+  .then(() => console.log('DB Connected!!'))
+  .catch(err => console.error('Connection error:', err));
 
 app.use(express.json()); // parse JSON bodies
 
@@ -16,6 +26,8 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");  
   next();
 });
+
+app.use('/user' , userRoutes)
 
 const PORT = process.env.PORT || 3000
 
