@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
     username : { type: String, unique:true ,required: true},
-    password : { type: String, required: true},
+    password : { type: String, required:true},
     followers :[String],
     following : [String]
 })
@@ -12,13 +12,12 @@ const User = mongoose.model("User",userSchema);
 //Create CRUD functions
 
 //Create a User
-async function register(username,email, password) {
+async function register(username, password) {
     const user =  await getUser(username);
     if(user) throw Error('Username already in use');
   
     const newUser = await User.create({
       username: username,
-      email:email,
       password: password
     });
   
@@ -33,7 +32,7 @@ async function register(username,email, password) {
 
 //READ User
 async function login(username, password) {
-    const user = getUser(username)
+    const user = await getUser(username)
     if(!user) throw Error('User not found');
 
     if(user.password !=password) throw Error('Wrong Password');
