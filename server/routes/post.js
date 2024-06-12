@@ -1,36 +1,60 @@
-const mongoose = require("mongoose");
-const users = require("./user");
+const express = require("express");
+const Post = require('../models/post'); //accesses functions in user model file
+const router = express.Router();
 
-const postSchema = new mongoose.Schema({
-    postcontent : String,
-    likes : Number,
-    userId : String
+// 2. create all routes to access database
+router
+.get('/', async (_req, res) => {
+  try {
+    const posts = await Post.getAllPosts();
+    res.send(posts);
+  } catch(err) {
+    res.status(401).send({message: err.message});
+  }
 })
+  .post('/Read', async (req, res) => {
+    try {
+        const post = await Post.Read(req.body.id);
+        res.send({...post });
+      } catch(error) {
+        res.status(401).send({ message: error.message });
+      }
+  })
 
-async function newPost(postcontent) {
-    const newPost = await Post.create({
-        postcontent : postcontent
-    });
-    return newPost;
-  }
+  .post('/create', async (req, res) => {
+    try {
+      const post = await newPost(req.body.postcontent, req.body.userId);
+      res.status(201).send(post); // Use 201 for resource created
+    } catch (error) {
+      res.status(400).send({ message: error.message }); // Use 400 for bad request
+    }
+  })
   
-  // UPDATE
-  async function updatePost(id, postcontent) {
-    const post = await Post.updateOne({"_id": id}, {$set: { postcontent : postcontent}});
-    return post;
-  }
-  
-  //DELETE
-  async function deletePost(id) {
-    await Post.deleteOne({"_id": id});
-  };
-  
-  // utility functions
-  async function getPost(id) {
-    return await Post.findOne({ "postcontent": postcontent});
-  }
-  
-  // 5. export all functions we want to access in route files
-  module.exports = { 
-      newPost, getPost, updatePost, deletePost
-  };
+  .put('/update', async (req, res) => {
+    try {
+      const post = await Post.updatePost(req.body.id, req.body.postcontent);
+      res.send({...post, postcontent: undefined});
+    } catch(error) {
+      res.status(401).send({ message: error.message });
+    }
+  })
+  .put('/edit', async (req, res) => {
+    try {
+      let note = await Post.editNotes(req.body);
+      res.send({...this.post, postcontent});
+    } catch(err) {
+      res.status(401).send({message: err.message})
+    }
+  })
+
+  .delete('/delete', async (req, res) => {
+    try {
+      await Post.deletePost(req.body.id);
+      res.send({ success: "Post deleted" });
+    } catch(error) {
+      res.status(401).send({ message: error.message });
+    }
+  })
+
+// 3. export router for use in index.js
+module.exports = router;
