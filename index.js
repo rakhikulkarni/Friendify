@@ -4,9 +4,11 @@ const express = require('express')
 const app = express()
 const mongoose = require("mongoose");
 const path = require('path')
+const router = express.Router();
 
-const userRoutes = require('./server/routes/user');
-const postRoutes = require('./server/routes/post');
+const userRoutes = require('./server/routes/userRoutes');
+const postRoutes = require('./server/routes/postRoutes');
+const followRoutes = require('./server/routes/postRoutes');
 
 mongoose.connect(process.env.dbURL)
   .then(() => console.log('DB Connected!!'))
