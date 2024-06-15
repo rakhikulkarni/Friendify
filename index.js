@@ -27,7 +27,11 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/user' , userRoutes)
+router.use("/user", require("./userRoutes"));
+router.use("/post", require("./postRoutes"));
+router.use("/follow", require("./followRoutes"));
+
+module.exports = router;
 
 const PORT = process.env.PORT || 3000
 
