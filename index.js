@@ -5,19 +5,19 @@ const app = express()
 const mongoose = require("mongoose");
 const path = require('path')
 const router = express.Router();
+const cors = require("cors")
 
-const userRoutes = require('./server/routes/userRoutes');
-const postRoutes = require('./server/routes/postRoutes');
-const followRoutes = require('./server/routes/postRoutes');
+// const userRoutes = require('./server/routes/userRoutes');
+// const postRoutes = require('./server/routes/postRoutes');
+// const followRoutes = require('./server/routes/postRoutes');
 
 mongoose.connect(process.env.dbURL)
   .then(() => console.log('DB Connected!!'))
   .catch(err => console.error('Connection error:', err));
 
 app.use(express.json()); // parse JSON bodies
-
+app.use(cors())
 app.use(express.static(__dirname + "/public"))
-app.get('/', (req,res) => res.sendFile(path.join(__dirname,'/public','index.html')))
 
 //route to at least one other entity that is NOT user/customer/etc.
 
@@ -29,9 +29,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-router.use("/user", require("./userRoutes"));
-router.use("/post", require("./postRoutes"));
-router.use("/follow", require("./followRoutes"));
+app.use("/user", require("./server/routes/userRoutes"));
+app.use("/post", require("./server/routes/postRoutes"));
+app.use("/follow", require("./server/routes/followRoutes"));
 
 module.exports = router;
 

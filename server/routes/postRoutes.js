@@ -12,10 +12,19 @@ router
     res.status(401).send({message: err.message});
   }
 })
-  .post('/Read', async (req, res) => {
+  .get('/get-posts', async (req, res) => {
     try {
-        const post = await Post.Read(req.body.id);
-        res.send({...post });
+        const post = await Post.getPosts();
+        res.status(200).json(post);
+      } catch(error) {
+        res.status(401).send({ message: error.message });
+      }
+  })
+  .get('/get-post/:post_id', async (req, res) => {
+    try {
+      const{post_id} = req.params;
+        const post = await Post.getPost(post_id);
+        res.status(200).json(post);
       } catch(error) {
         res.status(401).send({ message: error.message });
       }
@@ -23,17 +32,18 @@ router
 
   .post('/create', async (req, res) => {
     try {
-      const post = await newPost(req.body.postcontent, req.body.userId);
+      const post = await Post.newPost(req.body);
       res.status(201).send(post); // Use 201 for resource created
     } catch (error) {
       res.status(400).send({ message: error.message }); // Use 400 for bad request
     }
   })
   
-  .put('/update', async (req, res) => {
+  .put('/update/:post_id', async (req, res) => {
     try {
-      const post = await Post.updatePost(req.body.id, req.body.postcontent);
-      res.send({...post, postcontent: undefined});
+      const{post_id} = req.params;
+      const post = await Post.updatePost(post_id,req.body);
+      res.status(200).json({...post});
     } catch(error) {
       res.status(401).send({ message: error.message });
     }
@@ -46,10 +56,12 @@ router
       res.status(401).send({message: err.message})
     }
   })
-
-  .delete('/delete', async (req, res) => {
+  
+  .delete('/delete/:post_id', async (req, res) => {
     try {
-      await Post.deletePost(req.body.id);
+      const{post_id} = req.params;
+
+      await Post.deletePost(post_id);
       res.send({ success: "Post deleted" });
     } catch(error) {
       res.status(401).send({ message: error.message });

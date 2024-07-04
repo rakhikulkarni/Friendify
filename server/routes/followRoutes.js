@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Follow = require("../../models/follow");
+const Follow = require("../models/follow");
 
 // Create
 const createFollow = async (req, res) => {
